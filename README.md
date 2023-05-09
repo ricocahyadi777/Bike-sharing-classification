@@ -59,10 +59,11 @@ Then let's try a simple regression
 ```python
 lasso = linear_model.Lasso(alpha = 1.0)
 lasso.fit(x1_train, y_train)
-print('Alpha:', 1.0)
-print('R2 score:', lasso.score(x1_test, y_test))
+print("{:12}: {}".format('Alpha:', 1.0))
+print("{:12}: {}".format('R2 score:', lasso.score(x1_test, y_test)))
+print("Variables")
 for i in range(len(selected_cols)):
-    print(selected_cols[i],':', '\t', lasso.coef_[i])
+    print("{:12}: {}".format(selected_cols[i], lasso.coef_[i]))
 ```
 Resulting in:<br/>
 ![image](https://user-images.githubusercontent.com/63791918/237012336-b4d86a47-09c1-4102-afe4-f04652ce9657.png)
@@ -155,4 +156,62 @@ bikes = pd.concat((bikes, df), axis =1)
 Resulting in the desired result:<br/>
 ![image](https://user-images.githubusercontent.com/63791918/237017680-b293abb6-642f-4dca-aaa9-754d223d7500.png)
 
+### Multi-class Classification using Logistic Regression
+Using the same dataset, however to make it a classification problem, we are going to discretize the column casual. 
+From the data, we can get 3 segments of data almost equal in size by classifying it as follows:
++ 0 to 6 to low usage
++ 7 to 33 to medium usage 
++ 34 onward to high usage
+```python
+y = bikes['casual'].values
+y = np.array([1 if i < 7 else 2 if i < 34 else 3 for i in y])
+```
+We want to visualize overfitting happens when the regularization parameter C is large. So we select two relatively smaller data sets for training and test as follows.
+```python
+np.random.seed(2023)
+selection = np.random.choice(['train', 'test', 'rest'], num_row, replace = True, p = [0.01, 0.09, 0.9])
+y_train, y_test = y[selection == 'train'], y[selection == 'test']
+```
+Then we use a 'OneVsRest' Logistic Regression Classifier.
+```python
+selected_cols = ['yr', 'mnth', 'hr', 'holiday', 'workingday', 'temp', 'atemp', 'hum', 'windspeed']
+x = bikes[selected_cols].values
+x_train, x_test = x[selection == 'train',:], x[selection == 'test',:]
 
+multi_ovr_estimator = linear_model.LogisticRegression(solver='lbfgs',multi_class='ovr')
+multi_ovr_estimator.fit(x_train, y_train)
+y_ovr_predict = multi_ovr_estimator.predict(x_test)
+```
+
+Finally we visualize the results. <br/>
+![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/cee312e6-04e9-4f0b-bcde-ee1deefb9ff4)
+![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/ba04c29e-c46a-46d0-a4d5-d90dabb0ecaa)
+
+Finally we are to visualize the change of training error and test error in response to the change of complexity trade-off parameter C. <br/>
+Note that logistic regression actually maximizes the log likelihood, with the convention that cost function is usually a minimization function.
+```python
+num_C = 10
+C = [1.0] * num_C
+for i in range(num_C):
+    C[i] = pow(10, i-3)
+logit = [None] * num_C
+inv_log_likelihood_train = [0.0] * num_C
+inv_log_likelihood_test = [0.0] * num_C
+
+for i in range(num_C):
+    logreg_multi = LogisticRegression(C=C[i], solver='lbfgs', multi_class='multinomial')
+    logreg_multi.fit(x_train, y_train)
+    print('Accuracy of logistic regression classifier with C:{} on test set: {:.10f}'.format(C[i],logreg_multi.score(x_test, y_test)))
+    
+    y_train_predict = logreg_multi.predict(x_train)
+    y_train_predict_proba = logreg_multi.predict_proba(x_train)
+    
+    y_test_predict = logreg_multi.predict(x_test)
+    y_test_predict_proba = logreg_multi.predict_proba(x_test)
+    
+    inv_log_likelihood_train[i] = log_loss(y_train, y_train_predict_proba) 
+    inv_log_likelihood_test[i] = log_loss(y_test, y_test_predict_proba)
+```
+
+Finally we visualize the result: <br/>
+![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/aa0eb7dd-0a2a-4145-8140-ee0c2dcc0541)
