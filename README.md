@@ -214,4 +214,5 @@ for i in range(num_C):
 ```
 
 Finally we visualize the result: <br/>
+![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/e1c67666-6257-481c-8797-2fcb1c2b6555)
 ![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/aa0eb7dd-0a2a-4145-8140-ee0c2dcc0541)
