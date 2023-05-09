@@ -184,7 +184,8 @@ y_ovr_predict = multi_ovr_estimator.predict(x_test)
 ```
 
 Finally we visualize the results. <br/>
-![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/cee312e6-04e9-4f0b-bcde-ee1deefb9ff4)
+![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/078e636c-2fad-4cf7-8185-cb55192f526f)
+
 ![image](https://github.com/ricocahyadi777/bike-sharing-classification/assets/63791918/ba04c29e-c46a-46d0-a4d5-d90dabb0ecaa)
 
 Finally we are to visualize the change of training error and test error in response to the change of complexity trade-off parameter C. <br/>
