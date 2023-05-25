@@ -1,4 +1,4 @@
-# bike-sharing-classification
+# Bike-sharing-classification
 Project to do classification using maching learning on Bike sharing dataset. Through multiple methods and multiple models, a decent results are obtained. The code can be find in [bike_sharing.ipynb](https://github.com/ricocahyadi777/bike-sharing-classification/blob/7a44b550bef482edd0e53b4d9b7708013f29b650/bike_sharing.ipynb)
 
 ## Overview
